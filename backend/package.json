@@ -16,9 +16,9 @@
   "devDependencies": {
     "nodemon": "^2.0.20"
   },
-  "description": "",
-  "keywords": [],
-  "author": "",
+  "description": "Blue Tech E-commerce Backend API",
+  "keywords": ["ecommerce", "backend", "api", "nodejs", "express"],
+  "author": "Blue Tech Team",
   "license": "ISC",
   "type": "commonjs"
 }

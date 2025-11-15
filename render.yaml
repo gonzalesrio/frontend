@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: bleu-tech-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: MONGO_URI
+        scope: all
+        value: mongodb+srv://raniel:raniel1432@raniel.skzmuxw.mongodb.net/MarineBlue

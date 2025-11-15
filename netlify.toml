@@ -1,16 +1,16 @@
 [build]
-  command = "npm install --prefix backend && npm install --prefix frontend"
-  functions = "backend/functions"
+  command = "echo 'Frontend is static - no build required'"
   publish = "frontend"
 
 [dev]
-  command = "npm run dev --prefix backend"
-  port = 3000
+  command = "cd frontend && python -m http.server 8000"
+  port = 8000
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "https://bleu-tech-backend.onrender.com/api/:splat"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/*"

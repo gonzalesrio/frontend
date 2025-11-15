@@ -3,9 +3,12 @@ services:
     name: bleu-tech-backend
     env: node
     plan: free
-    buildCommand: npm install --prefix backend
-    startCommand: npm start --prefix backend
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
     envVars:
       - key: MONGO_URI
         scope: all
         value: mongodb+srv://raniel:raniel1432@raniel.skzmuxw.mongodb.net/MarineBlue
+      - key: NODE_ENV
+        scope: all
+        value: production

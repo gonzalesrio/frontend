@@ -1,4 +1,4 @@
-const API = (window.API_URL || 'http://localhost:5000') + '/api';
+const API = `${API_BASE_URL}/api`;
 
 // Cart helpers used by cart page
 function getCart(){

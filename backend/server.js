@@ -10,8 +10,6 @@ const fs = require('fs');
 const app = express();
 app.use(cors());
 app.use(express.json());
-// Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -25,7 +23,7 @@ if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
   fs.mkdirSync(path.join(__dirname, 'uploads'));
 }
 
-// Multer setup for image uploads
+// Multer setup for image uploads with size limit
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(__dirname, 'uploads')),
   filename: (req, file, cb) => {
@@ -33,7 +31,18 @@ const storage = multer.diskStorage({
     cb(null, unique + '-' + file.originalname);
   }
 });
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    // Accept only images
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  }
+});
 
 // Models
 const User = require('./models/user');
@@ -176,6 +185,17 @@ app.get('*', (req, res) => {
       res.status(404).send('Frontend not found');
     }
   });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ message: 'File too large. Max 5MB allowed.' });
+    }
+  }
+  res.status(500).json({ message: err.message || 'Server error' });
 });
 
 const PORT = process.env.PORT || 5000;

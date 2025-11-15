@@ -1,7 +1,7 @@
 // API Configuration
 const API_BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:5000'
-  : 'https://bleu-tech-backend.onrender.com';
+  : 'https://bluetechind.onrender.com';
 
 console.log('API Base URL:', API_BASE_URL);
 

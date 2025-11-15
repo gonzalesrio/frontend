@@ -17,7 +17,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, '../frontend')));
+const frontendPath = path.join(__dirname, '../frontend');
+app.use(express.static(frontendPath));
 
 // Ensure uploads folder exists
 if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
@@ -159,22 +160,20 @@ app.post('/api/orders', async (req, res) => {
 
 // Serve index.html for root and undefined routes
 app.get('/', (req, res) => {
-  const frontendPath = path.join(__dirname, '../frontend/index.html');
-  res.sendFile(frontendPath, (err) => {
+  res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
     if (err) {
       console.error('Error serving index.html:', err);
-      res.status(404).json({ message: 'Frontend not found' });
+      res.status(404).send('Frontend not found');
     }
   });
 });
 
 // Catch-all for client-side routing
 app.get('*', (req, res) => {
-  const frontendPath = path.join(__dirname, '../frontend/index.html');
-  res.sendFile(frontendPath, (err) => {
+  res.sendFile(path.join(frontendPath, 'index.html'), (err) => {
     if (err) {
       console.error('Error serving index.html:', err);
-      res.status(404).json({ message: 'Frontend not found' });
+      res.status(404).send('Frontend not found');
     }
   });
 });

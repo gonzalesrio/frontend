@@ -1,0 +1,11 @@
+{
+  "name": "blue-tech-frontend",
+  "version": "1.0.0",
+  "description": "Blue Tech E-commerce Frontend",
+  "scripts": {
+    "build": "echo 'Frontend is static HTML/CSS/JS - no build required'"
+  },
+  "dependencies": {},
+  "author": "Blue Tech Team",
+  "license": "ISC"
+}

@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin - BlueTech</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container" style="max-width:900px;margin:32px auto;padding:0 16px;">
+    <header style="background:linear-gradient(135deg,#0f9bd3,#0b6b92);border-radius:12px;box-shadow:0 4px 16px rgba(11,107,146,0.12);margin-bottom:32px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;color:white;border:1px solid rgba(255,255,255,0.1);">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="width:48px;height:48px;background:rgba(11,107,146,0.4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">BT</div>
+        <div>
+          <div style="font-weight:700;font-size:18px;">Admin Panel</div>
+          <small style="opacity:0.9;font-size:12px;">Manage products & users</small>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a href="index.html" style="background:rgba(11,107,146,0.3);color:white;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;border:none;box-shadow:0 2px 6px rgba(0,0,0,0.1);">🏠 Home</a>
+        <button id="logoutBtn" style="background:rgba(255,100,100,0.4);color:white;padding:10px 16px;border-radius:8px;border:none;font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.1);">🚪 Logout</button>
+      </div>
+    </header>
+
+    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:32px;align-items:flex-start;">
+      <!-- Left Panel: Forms -->
+      <div>
+        <!-- Product Form -->
+        <div style="background:#fff;padding:24px 20px;border-radius:10px;box-shadow:0 2px 12px #e0e0e0;margin-bottom:32px">
+          <h2 style="margin:0 0 18px 0;font-size:20px;color:#333;font-weight:700">Add New Product</h2>
+          <div id="productMsg"></div>
+          <form id="productForm">
+            <input name="name" placeholder="Product name" required style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px"/>
+            <textarea name="description" placeholder="Product description" rows="3" style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px"></textarea>
+            <input name="price" placeholder="Price (₱)" type="number" step="0.01" min="0" required style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px"/>
+            <input type="file" name="image" accept="image/*" style="margin-bottom:8px"/>
+            <small style="color:#aaa">Max file size: 5MB (JPG, PNG, GIF)</small>
+            <button style="width:100%;margin-top:16px;padding:10px 0;background:#0f9bd3;color:#fff;border:none;border-radius:6px;font-weight:600;font-size:16px;cursor:pointer" type="submit">Add Product</button>
+          </form>
+        </div>
+
+        <!-- User Form -->
+        <div style="background:#fff;padding:24px 20px;border-radius:10px;box-shadow:0 2px 12px #e0e0e0">
+          <h2 style="margin:0 0 18px 0;font-size:20px;color:#333;font-weight:700">Add New User</h2>
+          <div id="userMsg"></div>
+          <form id="adminUserForm">
+            <input name="name" placeholder="Full name" required style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px"/>
+            <input name="email" placeholder="Email address" type="email" required style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px"/>
+            <input name="password" placeholder="Password" type="password" required style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px"/>
+            <select name="role" style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px">
+              <option value="user">Regular User</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button style="width:100%;margin-top:16px;padding:10px 0;background:#0f9bd3;color:#fff;border:none;border-radius:6px;font-weight:600;font-size:16px;cursor:pointer" type="submit">Add User</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Panel: Tables & Products -->
+      <div>
+        <!-- Users Table -->
+        <h2 style="margin:0 0 18px 0;font-size:20px;color:#333;font-weight:700">Users Management</h2>
+        <div style="background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 12px #e0e0e0;margin-bottom:32px">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:#f5f5f5;color:#333;font-weight:600">
+                <th style="padding:10px;border-bottom:1px solid #eee">Name</th>
+                <th style="padding:10px;border-bottom:1px solid #eee">Email</th>
+                <th style="padding:10px;border-bottom:1px solid #eee">Role</th>
+                <th style="padding:10px;border-bottom:1px solid #eee">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable"></tbody>
+          </table>
+        </div>
+
+        <!-- Products Display -->
+        <h2 style="margin:0 0 18px 0;font-size:20px;color:#333;font-weight:700">Products Management</h2>
+        <div id="adminProducts" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-top:16px"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <!-- Edit product modal (minimal design) -->
+  <div id="editProductModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(240,240,240,0.95);z-index:1200;align-items:center;justify-content:center">
+    <div style="background:#fff;padding:24px 20px;border-radius:10px;box-shadow:0 2px 12px #e0e0e0;width:90%;max-width:520px">
+      <h2 style="margin:0 0 18px 0;font-size:20px;color:#333;font-weight:700">Edit Product</h2>
+      <form id="editProductForm">
+        <input name="name" id="edit-name" placeholder="Product name" required style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px" />
+        <textarea name="description" id="edit-description" placeholder="Product description" rows="3" style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px"></textarea>
+        <input name="price" id="edit-price" placeholder="Price (₱)" type="number" step="0.01" min="0" required style="width:100%;margin-bottom:12px;padding:10px;border-radius:6px;border:1px solid #eee;font-size:15px" />
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+          <div style="flex:1">
+            <input type="file" name="image" id="edit-image" accept="image/*" style="margin-bottom:8px" />
+            <small style="color:#aaa">Choose a new image to replace existing (optional)</small>
+          </div>
+          <div style="width:120px;height:80px;border-radius:6px;overflow:hidden;background:#f4f4f4" id="edit-image-preview"></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;justify-content:flex-end">
+          <button type="submit" style="background:#0f9bd3;color:#fff;border:none;border-radius:6px;font-weight:600;font-size:15px;padding:10px 18px;cursor:pointer">Save changes</button>
+          <button type="button" style="background:#eee;color:#333;border:none;border-radius:6px;font-weight:500;font-size:15px;padding:10px 18px;cursor:pointer;margin-left:8px" id="cancelEdit">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- No interactions.js, no animation scripts -->
+  <script>
+    // Check if admin is logged in (minimal design)
+    const user = JSON.parse(localStorage.getItem('blue_user'));
+    if(!user || user.role !== 'admin') {
+      alert('Admin access required');
+      location.href = 'login.html?role=admin';
+    }
+
+    // Logout functionality (minimal design)
+    document.getElementById('logoutBtn').onclick = function() {
+      if(confirm('Logout from admin panel?')) {
+        localStorage.removeItem('blue_user');
+        location.href = 'index.html';
+      }
+    };
+  </script>
+</body>
+</html>

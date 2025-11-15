@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Signup - BlueTech</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="auth-wrapper" style="min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;background:linear-gradient(135deg,#e6f8ff 0%,#d4f3ff 50%,#c8e9ff 100%);">
+    <div style="position:absolute;top:20px;left:20px;">
+      <a class="back" href="index.html" style="color:#0f9bd3;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">← Back to Home</a>
+    </div>
+    <div class="auth-card" style="box-shadow:0 8px 32px rgba(11,107,146,0.12);border:1px solid #e0eaf3;background:#fff;border-radius:12px;padding:26px;max-width:400px;width:100%;">
+      <div class="auth-logo" style="background:linear-gradient(135deg,#0f9bd3,#0b6b92);width:64px;height:64px;font-size:24px;box-shadow:0 4px 16px rgba(11,107,146,0.15);margin:0 auto 14px;">BT</div>
+      <div class="auth-title" style="font-size:20px;color:#0b6b92;font-weight:700;margin:0 0 4px;text-align:center;">Create Account</div>
+      <div class="auth-sub" style="margin-bottom:16px;text-align:center;color:#6b7c85;font-size:14px;">Join BlueTech and start shopping</div>
+      <div id="message"></div>
+      <button class="google-btn" style="background:#f8fbfd;border-radius:8px;padding:10px;border:1px solid #e6eef6;display:flex;align-items:center;gap:8px;justify-content:center;font-weight:600;margin-bottom:12px;width:100%;cursor:pointer;box-shadow:0 2px 6px rgba(15,155,211,0.08);" onclick="alert('Google sign-up not configured')">
+        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="G" style="width:18px;height:18px;"/>
+        Sign up with Google
+      </button>
+      <div class="divider" style="display:flex;align-items:center;gap:10px;margin:14px 0;color:#9aa7ad;font-size:13px;"><span style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#e5f2fa,transparent);"></span>or<span style="flex:1;height:1px;background:linear-gradient(90deg,transparent,#e5f2fa,transparent);"></span></div>
+      <form id="signupForm">
+        <input id="name" class="auth-input" placeholder="👤 Full name" required style="padding:12px 11px;border-radius:7px;background:#f8fbfd;margin-top:9px;border:1px solid #e6f3f8;width:100%;font-size:14px;"/>
+        <input id="email" class="auth-input" placeholder="📧 Email address" type="email" required style="padding:12px 11px;border-radius:7px;background:#f8fbfd;margin-top:9px;border:1px solid #e6f3f8;width:100%;font-size:14px;"/>
+        <input id="password" class="auth-input" placeholder="🔐 Password" type="password" required style="padding:12px 11px;border-radius:7px;background:#f8fbfd;margin-top:9px;border:1px solid #e6f3f8;width:100%;font-size:14px;"/>
+        <select id="role" class="auth-input" style="margin-top:9px;padding:12px 11px;border-radius:7px;background:#f8fbfd;border:1px solid #e6f3f8;width:100%;font-size:14px;cursor:pointer;">
+          <option value="user">👥 Customer</option>
+          <option value="admin">⚙️ Admin</option>
+        </select>
+        <div class="auth-actions" style="margin-top:16px;">
+          <button class="btn" style="width:100%;background:#0f9bd3;color:white;padding:12px 0;border:none;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 4px 12px rgba(15,155,211,0.25);" type="submit">✓ Create account</button>
+        </div>
+      </form>
+      <div class="small-note" style="margin-top:12px;text-align:center;color:#6b7c85;font-size:13px;">Already have an account? <a href="login.html" style="color:#0f9bd3;font-weight:600;text-decoration:none;">Sign in here</a></div>
+    </div>
+  </div>
+  <script src="js/auth.js"></script>
+  <script>
+    const signupForm = document.getElementById('signupForm');
+    const messageDiv = document.getElementById('message');
+    const API = (window.API_URL || 'http://localhost:5000') + '/api';
+
+    signupForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      messageDiv.innerHTML = '<div class="alert" style="text-align:center">Creating account...</div>';
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      
+      try {
+        const res = await fetch(`${API}/auth/signup`, {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ name, email, password, role })
+        });
+        const data = await res.json();
+        if(res.ok){
+          messageDiv.innerHTML = '<div class="alert success">✓ Account created successfully! Redirecting...</div>';
+          setTimeout(() => {
+            location.href = 'login.html';
+          }, 1500);
+        } else {
+          messageDiv.innerHTML = '<div class="alert error">✗ ' + (data.message || 'Signup failed') + '</div>';
+        }
+      } catch(e){
+        messageDiv.innerHTML = '<div class="alert error">✗ Connection error: ' + e.message + '</div>';
+      }
+    });
+  </script>
+</body>
+</html>

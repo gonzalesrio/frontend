@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Shopping Cart - BlueTech</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="javascript:history.back()" style="color:#0f9bd3;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:20px;">← Back</a>
+    <h2 style="color:#0b6b92;margin-top:0;margin-bottom:24px;">🛒 Shopping Cart</h2>
+    
+    <div class="cart-layout" style="display:block;">
+      <div>
+        <div class="form">
+          <div id="emptyCart" style="text-align:center;padding:40px;color:#999;display:none;">
+            <p style="font-size:18px;margin:0">Your cart is empty</p>
+            <a href="index.html" class="btn" style="margin-top:12px">Continue Shopping</a>
+          </div>
+          <div id="cartItems"></div>
+        </div>
+        
+        <!-- Checkout Button Below Table -->
+        <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:12px;">
+          <button class="btn" style="background:#0f9bd3;padding:12px 24px;border-radius:8px;border:none;color:white;cursor:pointer;font-weight:600;font-size:15px;" id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for checkout -->
+  <div id="checkoutModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;flex-direction:column;">
+    <div class="form" style="width:90%;max-width:500px;max-height:90vh;overflow-y:auto;background:#fff;padding:24px;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+      <h3 style="margin:0 0 16px;font-size:18px;font-weight:700;color:#0b6b92;">📝 Complete Your Order</h3>
+      <form id="checkoutForm">
+        <input id="chk-name" placeholder="👤 Full Name" required style="width:100%;padding:12px;margin:12px 0;border-radius:8px;border:1px solid #e6f3f8;background:#f8fbfd;"/>
+        <input id="chk-email" placeholder="📧 Email" type="email" required style="width:100%;padding:12px;margin:12px 0;border-radius:8px;border:1px solid #e6f3f8;background:#f8fbfd;"/>
+        <input id="chk-address" placeholder="📍 Delivery Address" required style="width:100%;padding:12px;margin:12px 0;border-radius:8px;border:1px solid #e6f3f8;background:#f8fbfd;"/>
+        <textarea id="chk-notes" placeholder="💬 Special requests (optional)" rows="3" style="width:100%;padding:12px;margin:12px 0;border-radius:8px;border:1px solid #e6f3f8;background:#f8fbfd;font-family:inherit;"></textarea>
+        <div style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end;">
+          <button class="btn" type="button" style="background:#999;padding:10px 16px;border-radius:8px;border:none;color:white;cursor:pointer;font-weight:600;" onclick="document.getElementById('checkoutModal').style.display='none'">Cancel</button>
+          <button class="btn" type="submit" style="background:#0f9bd3;padding:10px 16px;border-radius:8px;border:none;color:white;cursor:pointer;font-weight:600;">✓ Place Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/cart.js"></script>
+  <script>
+
+    const API = (window.API_URL || 'http://localhost:5000') + '/api';
+
+    // Cart quantity and remove handlers
+    function getCart() {
+      return JSON.parse(localStorage.getItem('blue_cart') || '[]');
+    }
+    function saveCart(cart) {
+      localStorage.setItem('blue_cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('cartUpdated'));
+    }
+    function changeQty(id, delta) {
+      const cart = getCart();
+      const idx = cart.findIndex(i => i._id === id);
+      if(idx === -1) return;
+      cart[idx].qty = Math.max(0, (Number(cart[idx].qty) || 0) + Number(delta));
+      if(cart[idx].qty <= 0) cart.splice(idx, 1);
+      saveCart(cart);
+      renderCart();
+    }
+    function removeItem(id) {
+      const cart = getCart();
+      const newCart = cart.filter(i => i._id !== id);
+      saveCart(newCart);
+      renderCart();
+    }
+
+    function renderCart(){
+      const cart = JSON.parse(localStorage.getItem('blue_cart') || '[]');
+      const emptyCart = document.getElementById('emptyCart');
+      const cartItems = document.getElementById('cartItems');
+      
+      if(cart.length === 0){
+        emptyCart.style.display = 'block';
+        cartItems.innerHTML = '';
+        document.getElementById('checkoutBtn').disabled = true;
+        return;
+      }
+
+      emptyCart.style.display = 'none';
+      document.getElementById('checkoutBtn').disabled = false;
+
+      // Display cart items with image, name, price, description, qty, total
+      let html = '<div style="border:1px solid #e6f3f8;border-radius:8px;overflow:hidden;">';
+      html += '<div style="background:#f8fbfd;padding:12px;font-weight:600;color:#0b6b92;display:grid;grid-template-columns:80px 1fr 80px 80px 80px;gap:12px;border-bottom:1px solid #e6f3f8;align-items:center;">';
+      html += '<div>Image</div><div>Product</div><div style="text-align:right;">Price</div><div style="text-align:right;">Qty</div><div style="text-align:right;">Total</div></div>';
+
+      let subtotal = 0;
+      cart.forEach(item => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+        // Use item.imageUrl if present, else fallback
+        let imageHtml = '';
+        if (item.imageUrl) {
+          const imageSrc = item.imageUrl.startsWith('http') ? item.imageUrl : (window.location.origin + item.imageUrl);
+          imageHtml = `<img src="${imageSrc}" alt="${item.name}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;background:#f8fbfd;" onerror="this.style.display='none'"/>`;
+        } else {
+          imageHtml = '<div style="width:60px;height:60px;background:#e0e0e0;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;border-radius:6px;">📷</div>';
+        }
+        html += `
+          <div style="padding:12px 0;border-bottom:1px solid #f0f0f0;display:grid;grid-template-columns:80px 1fr 100px 120px 80px;gap:12px;align-items:center;">
+            <div>${imageHtml}</div>
+            <div>
+              <div style="font-weight:600;color:#222;">${item.name}</div>
+              <div style="color:#666;font-size:12px;">${item.description ? item.description : ''}</div>
+            </div>
+            <div style="text-align:right;color:#666;">₱${Number(item.price).toFixed(2)}</div>
+            <div style="text-align:right;color:#666;display:flex;justify-content:flex-end;gap:8px;align-items:center;"> 
+              <button onclick="changeQty('${item._id}', -1)" style="width:30px;height:30px;border-radius:6px;border:1px solid #e6e6e6;background:#fff;cursor:pointer">−</button>
+              <div style="min-width:36px;text-align:center;font-weight:600">${item.qty}</div>
+              <button onclick="changeQty('${item._id}', 1)" style="width:30px;height:30px;border-radius:6px;border:1px solid #e6e6e6;background:#fff;cursor:pointer">+</button>
+            </div>
+            <div style="text-align:right;font-weight:600;color:#0b6b92;display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <div>₱${itemTotal.toFixed(2)}</div>
+              <button onclick="removeItem('${item._id}')" style="background:#ef4444;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:12px">Remove</button>
+            </div>
+          </div>
+        `;
+      });
+
+      const shipping = subtotal > 500 ? 0 : 50;
+      const total = subtotal + shipping;
+
+      html += '<div style="background:#f8fbfd;padding:12px;border-top:2px solid #e6f3f8;display:flex;justify-content:flex-end;gap:40px;font-weight:600;color:#0b6b92;">';
+      html += `<div>Subtotal: ₱${subtotal.toFixed(2)}</div>`;
+      html += `<div>Shipping: ₱${shipping.toFixed(2)}</div>`;
+      html += `<div>Total: ₱${total.toFixed(2)}</div>`;
+      html += '</div></div>';
+
+      cartItems.innerHTML = html;
+    }
+
+    document.getElementById('checkoutBtn').onclick = function() {
+      const cart = JSON.parse(localStorage.getItem('blue_cart') || '[]');
+      if(cart.length === 0) {
+        alert('Your cart is empty');
+        return;
+      }
+      const user = JSON.parse(localStorage.getItem('blue_user') || '{}');
+      if(!user.id) {
+        alert('Please login first');
+        location.href = 'login.html';
+        return;
+      }
+      document.getElementById('chk-name').value = user.name || '';
+      document.getElementById('chk-email').value = user.email || '';
+      document.getElementById('checkoutModal').style.display = 'flex';
+    };
+
+    document.getElementById('checkoutForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const cart = JSON.parse(localStorage.getItem('blue_cart') || '[]');
+      if(cart.length === 0) return alert('Your cart is empty');
+      const name = document.getElementById('chk-name').value.trim();
+      const email = document.getElementById('chk-email').value.trim();
+      const address = document.getElementById('chk-address').value.trim();
+      const notes = document.getElementById('chk-notes').value.trim();
+
+      if(!name) return alert('Please enter your full name');
+      if(!email) return alert('Please enter your email');
+      // simple email validation
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return alert('Please enter a valid email address');
+      if(!address) return alert('Please enter delivery address');
+
+      const payload = { name, email, address, description: notes, items: cart };
+      try {
+        const res = await fetch(`${API}/orders`, {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if(res.ok){
+          alert('Order placed successfully!');
+          localStorage.removeItem('blue_cart');
+          document.getElementById('checkoutModal').style.display = 'none';
+          location.href = 'dashboard.html';
+        } else {
+          const data = await res.json().catch(()=>({}));
+          alert('Error: ' + (data.message || 'Order failed'));
+        }
+      } catch(e){
+        alert('Connection error: ' + e.message);
+      }
+    });
+
+    window.addEventListener('load', () => {
+      renderCart();
+    });
+    
+    // Listen for cart updates from other pages
+    window.addEventListener('cartUpdated', () => {
+      console.log('Cart updated, re-rendering...');
+      renderCart();
+    });
+
+    // Listen for storage changes (when user adds items on other pages)
+    window.addEventListener('storage', (e) => {
+      if(e.key === 'blue_cart'){
+        console.log('Cart changed in localStorage, updating...');
+        renderCart();
+      }
+    });
+
+    // Polling fallback to check for cart changes
+    setInterval(() => {
+      const currentCart = JSON.parse(localStorage.getItem('blue_cart') || '[]');
+      const currentCount = currentCart.length;
+      if(!window.lastCartCount) window.lastCartCount = currentCount;
+      
+      if(currentCount !== window.lastCartCount){
+        console.log('Cart items changed, updating summary...');
+        renderCart();
+        window.lastCartCount = currentCount;
+      }
+    }, 500);
+  </script>
+</body>
+</html>

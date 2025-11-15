@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Login - BlueTech</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div style="max-width:420px;margin:60px auto;padding:26px 24px;background:#fff;border-radius:12px;box-shadow:0 4px 16px rgba(11,107,146,0.08);border:1px solid #e0eaf3;">
+    <a href="index.html" style="display:inline-block;margin-bottom:16px;color:#0f9bd3;font-weight:600;text-decoration:none;font-size:14px;">← Back to Home</a>
+    <div style="font-size:20px;font-weight:700;color:#0b6b92;margin-bottom:6px;">Sign in</div>
+    <div style="font-size:13px;color:#6b7c85;margin-bottom:16px;">to continue to BlueTech Computer Shop</div>
+    <div id="message"></div>
+    <form id="loginForm">
+      <input id="email" style="width:100%;padding:12px 11px;margin-bottom:11px;border-radius:7px;border:1px solid #e6f3f8;background:#f8fbfd;font-size:14px;" placeholder="📧 Email address" type="email" required/>
+      <input id="password" style="width:100%;padding:12px 11px;margin-bottom:14px;border-radius:7px;border:1px solid #e6f3f8;background:#f8fbfd;font-size:14px;" placeholder="🔒 Password" type="password" required/>
+      <button style="width:100%;padding:12px 0;background:#0f9bd3;color:#fff;border:none;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;box-shadow:0 2px 6px rgba(15,155,211,0.3);" type="submit">🔓 Sign in</button>
+    </form>
+    <div style="margin-top:16px;font-size:13px;color:#6b7c85;text-align:center;">Don't have an account? <a href="signup.html" style="color:#0f9bd3;font-weight:600;text-decoration:none">Create one</a></div>
+  </div>
+  <script src="js/auth.js"></script>
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+    const API = (window.API_URL || 'http://localhost:5000') + '/api';
+
+    loginForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      messageDiv.innerHTML = '<div class="alert" style="text-align:center">Logging in...</div>';
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if(res.ok){
+          messageDiv.innerHTML = '<div class="alert success">✓ Login successful!</div>';
+          localStorage.setItem('blue_user', JSON.stringify(data.user));
+          setTimeout(() => {
+            if(data.user.role === 'admin') location.href = 'admin.html';
+            else location.href = 'dashboard.html';
+          }, 800);
+        } else {
+          messageDiv.innerHTML = '<div class="alert error">✗ ' + (data.message || 'Login failed') + '</div>';
+        }
+      } catch(e){
+        messageDiv.innerHTML = '<div class="alert error">✗ Connection error: ' + e.message + '</div>';
+      }
+    });
+  </script>
+</body>
+</html>

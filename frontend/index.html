@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BlueTech Computer Shop</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container">
+    <header style="background:linear-gradient(135deg,#0f9bd3,#0b6b92);color:white;padding:14px 24px;border-radius:12px;box-shadow:0 4px 16px rgba(11,107,146,0.12);margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,0.1);">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:50px;height:50px;background:rgba(11,107,146,0.4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">BT</div>
+        <div>
+          <div style="font-weight:700;font-size:16px;">BlueTech Computer Shop</div>
+          <small style="opacity:0.9;font-size:12px;">Pagadian City — Brgy. Tiguma Zone 1</small>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <a href="login.html?role=user" style="display:flex;align-items:center;gap:6px;background:rgba(11,107,146,0.6);padding:10px 16px;border-radius:8px;color:white;text-decoration:none;font-weight:600;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">👤 User</a>
+        <a href="login.html?role=admin" style="display:flex;align-items:center;gap:6px;background:rgba(11,107,146,0.6);padding:10px 16px;border-radius:8px;color:white;text-decoration:none;font-weight:600;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.15);">⚙️ Admin</a>
+      </div>
+    </header>
+
+    <main>
+      <section style="background:linear-gradient(135deg,#e6f8ff,#d4f3ff);color:#0b6b92;padding:40px 28px;border-radius:12px;margin-bottom:32px;text-align:center;box-shadow:0 4px 16px rgba(11,107,146,0.08);border:1px solid rgba(15,155,211,0.2);">
+        <h1 style="margin:0 0 16px;font-size:32px;font-weight:700;">🖥️ Welcome to BlueTech</h1>
+        <p style="margin:0;font-size:16px;line-height:1.6;">Quality products, expert repairs, and friendly service. Your one-stop shop for all computer needs.</p>
+        <div style="display:flex;gap:12px;margin-top:20px;justify-content:center;">
+          <a href="about.html" style="background:#0f9bd3;color:#fff;padding:11px 20px;border-radius:8px;text-decoration:none;font-weight:600;box-shadow:0 2px 6px rgba(15,155,211,0.3);display:inline-flex;align-items:center;gap:6px;">📖 About Us</a>
+          <a href="contact.html" style="background:#0f9bd3;color:#fff;padding:11px 20px;border-radius:8px;text-decoration:none;font-weight:600;box-shadow:0 2px 6px rgba(15,155,211,0.3);display:inline-flex;align-items:center;gap:6px;">📞 Contact</a>
+        </div>
+      </section>
+
+      <section id="productsSection" style="margin-top:32px">
+        <h2 style="color:#0b6b92;margin-top:0">Featured Products</h2>
+        <div id="products" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin-top:24px;"></div>
+      </section>
+    </main>
+
+    <footer style="text-align:center;margin-top:40px;color:#5b6b72;font-size:14px;padding:24px;background:#fff;border-radius:12px;border-top:3px solid #0f9bd3;box-shadow:0 2px 8px rgba(11,107,146,0.08);">
+      © 2025 BlueTech Computer Shop. All rights reserved. | Pagadian City
+    </footer>
+  </div>
+
+  <script src="js/main.js"></script>
+  <!-- Removed interactions.js for static design -->
+</body>
+</html>

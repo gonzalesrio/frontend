@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard - BlueTech</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container">
+    <header class="header" style="margin-bottom:24px;background:linear-gradient(135deg,#0f9bd3,#0b6b92);color:white;padding:16px 20px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 16px rgba(11,107,146,0.12);border:1px solid rgba(255,255,255,0.1);">
+      <div class="brand" style="display:flex;align-items:center;gap:14px;">
+        <div class="logo" style="width:50px;height:50px;background:rgba(11,107,146,0.4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">BT</div>
+        <div>
+          <div style="font-weight:700;font-size:16px;">Dashboard</div>
+          <small style="opacity:0.9;font-size:12px;">Welcome back, <span id="userName">User</span></small>
+        </div>
+      </div>
+      <div class="top-icons" style="display:flex;gap:8px;align-items:center;">
+        <a class="icon-btn" href="index.html" style="display:flex;align-items:center;gap:6px;background:rgba(11,107,146,0.3);padding:10px 14px;border-radius:8px;color:white;text-decoration:none;font-weight:600;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.1);"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/home.png" style="width:24px;height:24px;"/> Home</a>
+        <a class="icon-btn" href="cart.html" style="display:flex;align-items:center;gap:6px;background:rgba(11,107,146,0.3);padding:10px 14px;border-radius:8px;color:white;text-decoration:none;font-weight:600;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.1);"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/shopping-cart.png" style="width:24px;height:24px;"/> Cart</a>
+        <button class="icon-btn" id="logoutBtn" style="display:flex;align-items:center;gap:6px;background:rgba(255,100,100,0.3);padding:10px 14px;border-radius:8px;color:white;font-weight:600;font-size:14px;border:none;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+          <img src="https://img.icons8.com/ios-glyphs/24/ffffff/logout-rounded-right.png" style="width:24px;height:24px;" alt="Logout"/>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <section style="margin-bottom:32px;">
+      <div style="background:linear-gradient(135deg,#e6f8ff,#d4f3ff);color:#0b6b92;padding:28px 24px;border-radius:12px;margin-bottom:24px;border:1px solid rgba(15,155,211,0.2);box-shadow:0 2px 8px rgba(11,107,146,0.08);">
+        <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;">👋 Welcome back, <span id="dashUserName">User</span>!</h2>
+        <p style="margin:0;font-size:14px;opacity:0.9;">Browse and add your favorite products to cart</p>
+      </div>
+      <h2 style="color:#0b6b92;margin:0 0 16px;font-size:18px;font-weight:700;display:flex;align-items:center;gap:8px;">🛍️ Featured Products</h2>
+      <div id="productsGrid" class="grid"></div>
+    </section>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/interactions.js"></script>
+  <script>
+    const user = JSON.parse(localStorage.getItem('blue_user'));
+    if(!user || !user.id) {
+      alert('Please login first');
+      location.href = 'login.html';
+    } else {
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('dashUserName').textContent = user.name;
+    }
+
+    function updateCartCount(){
+      // Cart count display removed
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if(confirm('Logout from your account?')){
+        localStorage.removeItem('blue_user');
+        location.href = 'index.html';
+      }
+    });
+
+    window.addEventListener('load', () => {
+      // Cart count display removed
+    });
+
+    // Override addToCart to update count
+    const originalAddToCart = window.addToCart;
+    window.addToCart = function(item){
+      originalAddToCart(item);
+      // Cart count display removed
+    };
+  </script>
+</body>
+</html>
